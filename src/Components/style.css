@@ -258,3 +258,15 @@ html{
 .textarea__book {
     margin-bottom: 15px;
 }
+
+.paginate__nav {
+    display: flex;
+    background-color: aliceblue;
+    padding: 10px;
+}
+
+.paginate__link {
+    font-size: 20px;
+    margin-right: 15px;
+    padding: 5px;
+}

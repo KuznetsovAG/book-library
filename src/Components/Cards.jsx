@@ -12,7 +12,7 @@ const Cards = ({ book }) => {
           item.volumeInfo.imageLinks.smallThumbnail;
 
         return (
-          <Link to={`/currentcards/:${item.id}`}>
+          <Link to={`/currentcards/${item.id}`} key={item.id}>
             <div className="card">
               <img src={thumbnail} alt="" />
               <div className="bottom">

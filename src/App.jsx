@@ -1,6 +1,5 @@
 import React from "react";
-import { Link, Route, Routes } from "react-router-dom";
-import Cards from "./Components/Cards";
+import { Route, Routes } from "react-router-dom";
 import CurrentCard from "./Components/CurrentCard";
 import Main from "./Components/Main";
 import "./Components/style.css";

@@ -5,29 +5,35 @@ import { Link } from "react-router-dom";
 const CurrentCard = () => {
   const { id } = useParams();
   const [books, setBooks] = useState([]);
-
+  console.log("id :>> ", id);
   useEffect(() => {
     singleBook();
-  }, [id]);
+  }, []);
 
   const singleBook = async () => {
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes?q=${id}&key=AIzaSyA6SaT23KNiiA6DnUfUQTvFeyAcQEkwnSU`
+        `https://www.googleapis.com/books/v1/volumes/${id}`
       );
-      setBooks(response.data.items);
+
+      setBooks([...books, response.data]);
     } catch (error) {
       console.log(error.message);
     }
   };
+
   console.log("books :>> ", books);
+
   return (
     <>
       <div>
         {books.map((book) => (
           <div key={book.id} className="single__book">
             <img
-              src={book.volumeInfo.imageLinks.smallThumbnail}
+              src={
+                book.volumeInfo.imageLinks &&
+                book.volumeInfo.imageLinks.smallThumbnail
+              }
               alt="book"
               className="book__img"
             />
@@ -39,6 +45,7 @@ const CurrentCard = () => {
                 name="comment"
                 cols="50"
                 rows="10"
+                value={""}
                 className="textarea__book"
               >
                 {book.volumeInfo.description}

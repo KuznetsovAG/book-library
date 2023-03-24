@@ -1,12 +1,24 @@
 import react, { useEffect, useState } from "react";
 import Cards from "./Cards";
 import axios from "axios";
+import Pagination from "./Pagination";
 
 const Main = () => {
   const [search, setSearch] = useState("");
   const [bookData, setData] = useState([]);
   const [categories, setCategories] = useState("");
+  const [count, setCount] = useState(0);
   const [selectValue, setSeletValue] = useState({ value: "relevance" });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [booksPerPage] = useState(30);
+
+  const lastBookPage = currentPage * booksPerPage;
+  const firstBookPage = lastBookPage - booksPerPage;
+  const currentBooks = bookData.slice(firstBookPage, lastBookPage);
+
+  const morePage = () => {
+    setCurrentPage((prevState) => prevState + 1);
+  };
 
   const searchBook = (e) => {
     if (e.key === "Enter") {
@@ -17,9 +29,12 @@ const Main = () => {
           }&orderBy=${
             selectValue.value
           }&key=AIzaSyA6SaT23KNiiA6DnUfUQTvFeyAcQEkwnSU
-            &maxResults=30`
+            &maxResults=40`
         )
-        .then((res) => setData(res.data.items))
+        .then((res) => {
+          setData(res.data.items);
+          setCount(res.data.totalItems);
+        })
         .catch((err) => console.log(err));
     }
   };
@@ -50,6 +65,7 @@ const Main = () => {
     setCategories(e.target.value);
   };
 
+  console.log("bookData :>> ", bookData);
   return (
     <>
       <div className="header">
@@ -102,13 +118,16 @@ const Main = () => {
         </div>
       </div>
 
-      <div className="card__title">Fount: {bookData.length} results</div>
-
-      <div className="container">{<Cards book={bookData} />}</div>
-      {bookData.length > 0 && (
-        <div className="paginate">
-          <button className="button__more">Learn more</button>
-        </div>
+      {count > 0 && (
+        <>
+          <div className="card__title">Fount: {count} results</div>
+          <div className="container">{<Cards book={currentBooks} />}</div>
+          <Pagination
+            booksPerPage={booksPerPage}
+            morePage={morePage}
+            totalBook={bookData.length}
+          />
+        </>
       )}
     </>
   );
