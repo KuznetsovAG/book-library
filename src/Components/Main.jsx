@@ -1,4 +1,4 @@
-import react, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Cards from "./Cards";
 import axios from "axios";
 import Pagination from "./Pagination";
@@ -9,35 +9,32 @@ const Main = () => {
   const [categories, setCategories] = useState("");
   const [count, setCount] = useState(0);
   const [selectValue, setSeletValue] = useState({ value: "relevance" });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [booksPerPage] = useState(30);
+  const [currentPage] = useState(1);
+  const [booksPerPage, setBookPerPage] = useState(30);
 
-  const lastBookPage = currentPage * booksPerPage;
+  const lastBookPage = currentPage + booksPerPage;
   const firstBookPage = lastBookPage - booksPerPage;
   const currentBooks = bookData.slice(firstBookPage, lastBookPage);
 
   const morePage = () => {
-    setCurrentPage((prevState) => prevState + 1);
+    setBookPerPage(booksPerPage + 30);
   };
 
-  const searchBook = (e) => {
-    if (e.key === "Enter") {
-      axios
-        .get(
-          `https://www.googleapis.com/books/v1/volumes?q=${search}${
-            categories.length > 0 ? `+subject:${categories}` : ""
-          }&orderBy=${
-            selectValue.value
-          }&key=AIzaSyA6SaT23KNiiA6DnUfUQTvFeyAcQEkwnSU
-            &maxResults=40`
-        )
-        .then((res) => {
-          setData(res.data.items);
-          setCount(res.data.totalItems);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
+  useEffect(() => {
+    axios
+      .get(
+        `https://www.googleapis.com/books/v1/volumes?q=${search}${
+          categories.length > 0 ? `+subject:${categories}` : ""
+        }&orderBy=${
+          selectValue.value
+        }&key=AIzaSyA6SaT23KNiiA6DnUfUQTvFeyAcQEkwnSU
+        &maxResults=30&startIndex=${booksPerPage}`
+      )
+      .then((res) => {
+        setData([...bookData, ...res.data.items]);
+      })
+      .catch((err) => console.log(err));
+  }, [booksPerPage]);
 
   const searchBookClick = () => {
     axios
@@ -49,8 +46,17 @@ const Main = () => {
         }&key=AIzaSyA6SaT23KNiiA6DnUfUQTvFeyAcQEkwnSU
             &maxResults=30`
       )
-      .then((res) => setData(res.data.items))
+      .then((res) => {
+        setData(res.data.items);
+        setCount(res.data.totalItems);
+      })
       .catch((err) => console.log(err));
+  };
+
+  const searchBook = (e) => {
+    if (e.key === "Enter") {
+      return searchBookClick();
+    }
   };
 
   const handleChange = (e) => {
@@ -90,7 +96,7 @@ const Main = () => {
             </button>
           </div>
           <div className="select">
-            <form>
+            <form className="select__categories">
               <label>
                 Categories:
                 <select onChange={handleChangeCategories}>
@@ -105,7 +111,7 @@ const Main = () => {
               </label>
             </form>
 
-            <form>
+            <form className="select__sorting">
               <label>
                 Sorting by:
                 <select onChange={handleChangeOption}>
@@ -117,7 +123,6 @@ const Main = () => {
           </div>
         </div>
       </div>
-
       {count > 0 && (
         <>
           <div className="card__title">Fount: {count} results</div>

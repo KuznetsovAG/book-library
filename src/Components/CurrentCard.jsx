@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Main from "./Main";
 import axios from "axios";
 import { Link } from "react-router-dom";
 const CurrentCard = () => {
@@ -8,7 +9,7 @@ const CurrentCard = () => {
   console.log("id :>> ", id);
   useEffect(() => {
     singleBook();
-  }, []);
+  }, [id]);
 
   const singleBook = async () => {
     try {
@@ -26,6 +27,7 @@ const CurrentCard = () => {
 
   return (
     <>
+      <Main />
       <div>
         {books.map((book) => (
           <div key={book.id} className="single__book">
@@ -45,14 +47,13 @@ const CurrentCard = () => {
                 name="comment"
                 cols="50"
                 rows="10"
-                value={""}
                 className="textarea__book"
               >
                 {book.volumeInfo.description}
               </textarea>
               <Link to="/">
                 <button className="button__back">
-                  Вернкться к списку книг
+                  Вернуться к списку книг
                 </button>
               </Link>
             </div>
