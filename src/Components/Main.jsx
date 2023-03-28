@@ -1,56 +1,26 @@
 import React, { useEffect, useState } from "react";
 import Cards from "./Cards";
 import axios from "axios";
-import Pagination from "./Pagination";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addSearchValue,
+  clearBooks,
+  fetchBooks,
+  setCategoriesValue,
+  setSeletValues,
+  updateStartIndex,
+} from "../reducers/bookReducer";
 
 const Main = () => {
   const [search, setSearch] = useState("");
-  const [bookData, setData] = useState([]);
-  const [categories, setCategories] = useState("");
-  const [count, setCount] = useState(0);
-  const [selectValue, setSeletValue] = useState({ value: "relevance" });
-  const [currentPage] = useState(1);
-  const [booksPerPage, setBookPerPage] = useState(30);
-
-  const lastBookPage = currentPage + booksPerPage;
-  const firstBookPage = lastBookPage - booksPerPage;
-  const currentBooks = bookData.slice(firstBookPage, lastBookPage);
-
-  const morePage = () => {
-    setBookPerPage(booksPerPage + 30);
-  };
-
-  useEffect(() => {
-    axios
-      .get(
-        `https://www.googleapis.com/books/v1/volumes?q=${search}${
-          categories.length > 0 ? `+subject:${categories}` : ""
-        }&orderBy=${
-          selectValue.value
-        }&key=AIzaSyA6SaT23KNiiA6DnUfUQTvFeyAcQEkwnSU
-        &maxResults=30&startIndex=${booksPerPage}`
-      )
-      .then((res) => {
-        setData([...bookData, ...res.data.items]);
-      })
-      .catch((err) => console.log(err));
-  }, [booksPerPage]);
+  const loading = useSelector((state) => state.bookReducer.loading);
+  const dispatch = useDispatch();
 
   const searchBookClick = () => {
-    axios
-      .get(
-        `https://www.googleapis.com/books/v1/volumes?q=${search}${
-          categories.length > 0 ? `+subject:${categories}` : ""
-        }&orderBy=${
-          selectValue.value
-        }&key=AIzaSyA6SaT23KNiiA6DnUfUQTvFeyAcQEkwnSU
-            &maxResults=30`
-      )
-      .then((res) => {
-        setData(res.data.items);
-        setCount(res.data.totalItems);
-      })
-      .catch((err) => console.log(err));
+    dispatch(clearBooks());
+    dispatch(updateStartIndex(0));
+    dispatch(fetchBooks());
   };
 
   const searchBook = (e) => {
@@ -60,18 +30,21 @@ const Main = () => {
   };
 
   const handleChange = (e) => {
+    dispatch(addSearchValue(e.target.value));
     setSearch(e.target.value);
   };
 
   const handleChangeOption = (e) => {
-    setSeletValue({ value: e.target.value });
+    dispatch(setSeletValues(e.target.value));
   };
 
   const handleChangeCategories = (e) => {
-    setCategories(e.target.value);
+    if (e.target.value === "all") {
+      return dispatch(setCategoriesValue(""));
+    }
+    dispatch(setCategoriesValue(e.target.value));
   };
 
-  console.log("bookData :>> ", bookData);
   return (
     <>
       <div className="header">
@@ -123,17 +96,6 @@ const Main = () => {
           </div>
         </div>
       </div>
-      {count > 0 && (
-        <>
-          <div className="card__title">Fount: {count} results</div>
-          <div className="container">{<Cards book={currentBooks} />}</div>
-          <Pagination
-            booksPerPage={booksPerPage}
-            morePage={morePage}
-            totalBook={bookData.length}
-          />
-        </>
-      )}
     </>
   );
 };

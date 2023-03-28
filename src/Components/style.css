@@ -210,6 +210,11 @@ html{
 }
 
 
+.book__title {
+    padding: 10px;
+    font-size: 30px;
+    text-align: center;
+}
 
 .current__card {
     display: flex;
@@ -237,7 +242,7 @@ html{
 .card__title {
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 10px;
     font-size: 30px;
 }
 
@@ -273,6 +278,11 @@ html{
     font-size: 20px;
     margin-right: 15px;
     padding: 5px;
+}
+
+.loader {
+    font-size: 30px;
+    text-align: center;
 }
 
 @media (max-width: 1130px) {

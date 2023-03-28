@@ -1,12 +1,6 @@
 import React from "react";
 
-const Pagination = ({ booksPerPage, totalBook, morePage }) => {
-  const pageNumbers = [];
-
-  for (let i = 1; i <= Math.ceil(totalBook / booksPerPage); i++) {
-    pageNumbers.push(i);
-  }
-
+const Pagination = ({ morePage }) => {
   return (
     <div className="paginate">
       <button className="button__more" onClick={morePage}>
