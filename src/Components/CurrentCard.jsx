@@ -14,7 +14,7 @@ const CurrentCard = () => {
   }, [id]);
 
   if (!book) {
-    return <h1>{loading}</h1>;
+    return <h2 className="loading__title">Loading....</h2>;
   }
 
   return (
@@ -33,14 +33,9 @@ const CurrentCard = () => {
             <p className="categories">{book.volumeInfo.categories}</p>
             <h3 className="title">{book.volumeInfo.title}</h3>
             <p className="authors">{book.volumeInfo.authors}</p>
-            <textarea
-              name="comment"
-              cols="50"
-              rows="10"
-              className="textarea__book"
-            >
+            <div className="description__book">
               {book.volumeInfo.description}
-            </textarea>
+            </div>
             <Link to="/">
               <button className="button__back">Вернуться к списку книг</button>
             </Link>

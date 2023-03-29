@@ -77,6 +77,8 @@ html{
     height: 35px;
     padding: 0 0.5rem;
 }
+
+
 .container{
     width: 85%;
     margin: 0 auto;
@@ -86,6 +88,7 @@ html{
     grid-gap:20px;
     box-sizing: border-box;
     margin-bottom: 20px;
+    
 }
 .card{
     background-color: var(--secondary-color);
@@ -115,6 +118,7 @@ html{
     font-size: 14px;
     margin-bottom: 15px;
     text-align: left;
+    color: black;
 }
 .card .bottom .amount{
     position: absolute;
@@ -198,7 +202,6 @@ html{
     text-decoration: underline;
     color: rgb(80, 80, 80);
     margin: 10px 0px 10px 0px;
-
 }
 
 .authors{
@@ -233,13 +236,12 @@ html{
 
 .single__book {
     margin-top: 20px;
-    width: 800px;
+    width: 100%;
     height: 500px;
-    background-color: aliceblue;
+    background-color: rgb(255, 255, 255);
     display: flex;
 }
-
-.card__title {
+.loading__title, .total__title {
     display: flex;
     justify-content: center;
     padding: 10px;
@@ -249,6 +251,7 @@ html{
 .button__more {
     padding: 10px;
     border-radius: 5px;
+    margin-bottom: 20px;
 }
 
 .paginate {
@@ -264,8 +267,10 @@ html{
     padding: 10px;
 }
 
-.textarea__book {
+.description__book {
     margin-bottom: 15px;
+    border: 1px solid rgb(170, 165, 165);
+    padding: 10px;
 }
 
 .paginate__nav {
