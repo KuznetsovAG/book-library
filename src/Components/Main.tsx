@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from "react";
-import Cards from "./Cards";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import React, { FC, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import {
   addSearchValue,
   clearBooks,
@@ -12,10 +9,10 @@ import {
   updateStartIndex,
 } from "../reducers/bookReducer";
 
-const Main = () => {
+const Main: FC = () => {
   const [search, setSearch] = useState("");
-  const loading = useSelector((state) => state.bookReducer.loading);
-  const dispatch = useDispatch();
+  const loading = useAppSelector((state) => state.bookReducer.loading);
+  const dispatch = useAppDispatch();
 
   const searchBookClick = () => {
     dispatch(clearBooks());
@@ -23,22 +20,22 @@ const Main = () => {
     dispatch(fetchBooks());
   };
 
-  const searchBook = (e) => {
+  const searchBook = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === "Enter") {
       return searchBookClick();
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(addSearchValue(e.target.value));
     setSearch(e.target.value);
   };
 
-  const handleChangeOption = (e) => {
+  const handleChangeOption = (e: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch(setSeletValues(e.target.value));
   };
 
-  const handleChangeCategories = (e) => {
+  const handleChangeCategories = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === "all") {
       return dispatch(setCategoriesValue(""));
     }

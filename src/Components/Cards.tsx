@@ -1,20 +1,26 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { FC } from "react";
 import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { fetchBooks, updateStartIndex } from "../reducers/bookReducer";
 import Pagination from "./Pagination";
 
-const Cards = () => {
-  const books = useSelector((state) => state.bookReducer.books);
-  const total = useSelector((state) => state.bookReducer.total);
-  const loading = useSelector((state) => state.bookReducer.loading);
-  const startIndexBook = useSelector((state) => state.bookReducer.startIndex);
-  const dispatch = useDispatch();
+const Cards:FC = () => {
+  const books = useAppSelector((state) => state.bookReducer.books);
+  const total = useAppSelector((state) => state.bookReducer.total);
+  const loading = useAppSelector((state) => state.bookReducer.loading);
+  const startIndexBook = useAppSelector((state) => state.bookReducer.startIndex);
+  const error = useAppSelector((state) => state.bookReducer.hasError)
+  const dispatch = useAppDispatch();
 
   const morePage = () => {
     dispatch(updateStartIndex(startIndexBook + 30));
     dispatch(fetchBooks());
   };
+
+  if (error) {
+    return <h2 className="loading__title">Unable to find book, server error</h2>
+  }
+
 
   if (!books || !books.length) {
     return loading === "loading" ? (
@@ -23,7 +29,7 @@ const Cards = () => {
       <h2 className="book__title">Введите название книги</h2>
     );
   }
-
+  console.log("books :>> ", books);
   return (
     <div className="main__card">
       <div className="total__title">Fount: {total} results</div>
@@ -34,17 +40,19 @@ const Cards = () => {
             item.volumeInfo.imageLinks.smallThumbnail;
 
           return (
-            <div>
-              <Link to={`/currentcards/${item.id}`} key={item.id}>
+            <div key={item.id}>
+              
                 <div className="card">
+                <Link to={`/currentcards/${item.id}`}>
                   <img src={thumbnail} alt="" />
+                  </Link>
                   <div className="bottom">
                     <p className="categories">{item.volumeInfo.categories}</p>
                     <h3 className="title">{item.volumeInfo.title}</h3>
                     <p className="authors">{item.volumeInfo.authors}</p>
                   </div>
                 </div>
-              </Link>
+              
             </div>
           );
         })}

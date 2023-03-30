@@ -1,7 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import { Books, StateBooks } from "../types/Book";
 
-export const fetchBooks = createAsyncThunk(
+export const fetchBooks = createAsyncThunk<Books[], undefined, {rejectValue: string, state: {bookReducer: StateBooks}}>(
   "books/fetchBooks",
   async function (_, { rejectWithValue, getState, dispatch }) {
     const state = getState();
@@ -15,19 +16,19 @@ export const fetchBooks = createAsyncThunk(
             : ""
         }&orderBy=${
           state.bookReducer.selectValue
-        }&key=AIzaSyA6SaT23KNiiA6DnUfUQTvFeyAcQEkwnSU
+        }&key=AIzaSyCwC_E0LIPWXjmm5RBTxZaE6ukP1dDJNUI
              &maxResults=30&startIndex=${state.bookReducer.startIndex}`
       );
-      console.log("response :>> ", response);
+      console.log('response :>> ', response);
       dispatch(totalBooks(response.data.totalItems));
       return response.data.items;
     } catch (error) {
-      rejectWithValue(error.message);
+      return rejectWithValue('Cant search book. Server Error'); 
     }
   }
 );
 
-export const foundBooks = createAsyncThunk(
+export const foundBooks = createAsyncThunk<Books, string | undefined, {rejectValue: string}>(
   "bookCard/foundBooks",
   async function (id, { rejectWithValue }) {
     try {
@@ -36,16 +37,17 @@ export const foundBooks = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      rejectWithValue(error.message);
+      console.log('hello error');
+      return rejectWithValue('Cant search book. Not found book');
     }
   }
 );
 
-const initialState = {
+const initialState:StateBooks = {
   books: [],
   loading: false,
   total: 0,
-  error: null,
+  hasError: false,
   search: "",
   categories: "",
   selectValue: "relevance",
@@ -57,49 +59,50 @@ const bookReducer = createSlice({
   name: "book",
   initialState,
   reducers: {
-    addSearchValue: (state, action) => {
+    addSearchValue: (state, action: PayloadAction<string | number>) => {
       state.search = action.payload;
     },
-    setCategoriesValue: (state, action) => {
+    setCategoriesValue: (state, action: PayloadAction<string>) => {
       state.categories = action.payload;
     },
-    setSeletValues: (state, action) => {
+    setSeletValues: (state, action: PayloadAction<string>) => {
       state.selectValue = action.payload;
     },
-    totalBooks: (state, action) => {
+    totalBooks: (state, action: PayloadAction<number>) => {
       state.total = action.payload;
     },
     clearBooks: (state) => {
       state.books = [];
     },
-    updateStartIndex: (state, action) => {
+    updateStartIndex: (state, action: PayloadAction<number>) => {
       state.startIndex = action.payload;
     },
   },
-  extraReducers: {
-    [fetchBooks.pending]: (state) => {
+  extraReducers: (builder) => {
+    builder
+    .addCase(fetchBooks.pending, (state) => {
       state.loading = "loading";
-      state.error = null;
-    },
-    [fetchBooks.fulfilled]: (state, action) => {
+      state.hasError = false;
+    })
+    .addCase(fetchBooks.fulfilled, (state, action) => {
       state.loading = "success";
       state.books.push(...action.payload);
-    },
-    [fetchBooks.rejected]: (state, action) => {
+    })
+    .addCase(fetchBooks.rejected, (state) => {
       state.loading = "rejected";
-      state.error = action.payload;
-    },
-    [foundBooks.pending]: (state) => {
+      state.hasError = true;
+    })
+    .addCase(foundBooks.pending, (state) => {
       state.loading = "loading";
-      state.error = null;
-    },
-    [foundBooks.fulfilled]: (state, action) => {
+      state.hasError = false;
+    })
+    .addCase(foundBooks.fulfilled, (state, action) => {
       state.loading = "success";
       state.foundBooks = action.payload;
-    },
-    [foundBooks.rejected]: (state, action) => {
-      state.error = action.payload;
-    },
+    })
+    .addCase(foundBooks.rejected, (state) => {
+      state.hasError = true;
+    })
   },
 });
 
@@ -109,7 +112,6 @@ export const {
   setCategoriesValue,
   setSeletValues,
   totalBooks,
-  setStartIndex,
   updateStartIndex,
   clearBooks,
 } = bookReducer.actions;

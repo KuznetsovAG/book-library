@@ -1,25 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { foundBooks } from "../reducers/bookReducer";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 
-const CurrentCard = () => {
+const CurrentCard: FC = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
-  const book = useSelector((state) => state.bookReducer.foundBooks);
-  const loading = useSelector((state) => state.bookReducer.loading);
+  const dispatch = useAppDispatch();
+  const book = useAppSelector((state) => state.bookReducer.foundBooks);
+  const error = useAppSelector((state) => state.bookReducer.hasError)
+  console.log('error :>> ', error);
   useEffect(() => {
     dispatch(foundBooks(id));
   }, [id]);
 
-  if (!book) {
-    return <h2 className="loading__title">Loading....</h2>;
+  if (!book || error) {
+    return error ? <h2 className="loading__title">Book not found, server error</h2> : <h2 className="loading__title">Loading....</h2>;
   }
 
   return (
     <>
-      {book && (
+    {book && (
         <div className="single__book">
           <img
             src={
@@ -28,7 +29,7 @@ const CurrentCard = () => {
             }
             alt="book"
             className="book__img"
-          />
+          />        
           <div className="book__info">
             <p className="categories">{book.volumeInfo.categories}</p>
             <h3 className="title">{book.volumeInfo.title}</h3>
@@ -41,7 +42,8 @@ const CurrentCard = () => {
             </Link>
           </div>
         </div>
-      )}
+      ) }
+      
     </>
   );
 };
