@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { useAppDispatch } from "../hooks/hooks";
 import {
   addSearchValue,
   clearBooks,
@@ -11,7 +11,6 @@ import {
 
 const Main: FC = () => {
   const [search, setSearch] = useState("");
-  const loading = useAppSelector((state) => state.bookReducer.loading);
   const dispatch = useAppDispatch();
 
   const searchBookClick = () => {

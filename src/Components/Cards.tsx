@@ -29,7 +29,7 @@ const Cards:FC = () => {
       <h2 className="book__title">Введите название книги</h2>
     );
   }
-  console.log("books :>> ", books);
+  
   return (
     <div className="main__card">
       <div className="total__title">Fount: {total} results</div>

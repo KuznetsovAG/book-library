@@ -9,7 +9,6 @@ const CurrentCard: FC = () => {
   const dispatch = useAppDispatch();
   const book = useAppSelector((state) => state.bookReducer.foundBooks);
   const error = useAppSelector((state) => state.bookReducer.hasError)
-  console.log('error :>> ', error);
   useEffect(() => {
     dispatch(foundBooks(id));
   }, [id]);

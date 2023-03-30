@@ -19,8 +19,9 @@ export const fetchBooks = createAsyncThunk<Books[], undefined, {rejectValue: str
         }&key=AIzaSyCwC_E0LIPWXjmm5RBTxZaE6ukP1dDJNUI
              &maxResults=30&startIndex=${state.bookReducer.startIndex}`
       );
-      console.log('response :>> ', response);
-      dispatch(totalBooks(response.data.totalItems));
+      if (state.bookReducer.startIndex === 0) {
+        dispatch(totalBooks(response.data.totalItems));
+      }
       return response.data.items;
     } catch (error) {
       return rejectWithValue('Cant search book. Server Error'); 
@@ -37,7 +38,6 @@ export const foundBooks = createAsyncThunk<Books, string | undefined, {rejectVal
       );
       return response.data;
     } catch (error) {
-      console.log('hello error');
       return rejectWithValue('Cant search book. Not found book');
     }
   }
